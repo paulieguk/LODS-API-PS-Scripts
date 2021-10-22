@@ -4,10 +4,10 @@
 $api_key = @{'api_key' = 'AI Key goes here'}
 $baseURL = 'https://labondemand.com/api/v3'
 $apiCMD = 'launch'
-$labId = '105384'
-$UserId = 'abcde'
-$firstName = 'John'
-$lastName = 'Doe'
+$labId = 'LabId'
+$UserId = 'UserID'
+$firstName = 'FName'
+$lastName = 'LName'
 
 $apiCMD = "$($apiCMD)?labid=$($labId)&userid=$($userid)&firstname=$($firstName)&lastname=$($lastname)"
 
