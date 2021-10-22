@@ -1,4 +1,9 @@
-## Set your api key, site url, Be sure to remove the <>Brackets when adding the api key.
+##This script will catalog labs abailable via you API using PowerShell.
+##The script output will report the following oinformation:
+##  Lab Series Id's and Lab Series Names over the API Consumer
+##  Lap Profile Id's, Lab Profile Name, Lab Series Id the Lab Profile is in and the Lab Series Name.
+
+## Set your api key,  Be sure to remove the <>Brackets when adding the api key.
 $api_key = @{'api_key' = '<API key goes here>'}
 $baseURL = 'https://labondemand.com/api/v3'
 $apiCMD = 'catalog'
@@ -26,8 +31,24 @@ If ($apiResponse.LabSeries.Count -gt 0) {
 If ($apiResponse.LabProfiles.Count -gt 0) {
     Write-Host
     Write-Host "This Catalog contains $($apiResponse.LabProfiles.Count) Lab Profiles:" -ForegroundColor Green
-    $apiResponse.LabProfiles | Format-Table Id, Name, Number, SeriesID
+    
+    For ($i = 0; $i -le $apiresponse.labprofiles.count; $i++) {
+        $count = 0
+        while ($apiResponse.LabSeries.Id[$count] -ne $apiResponse.LabProfiles.SeriesId[$i]){
+            $count++
+        }
+        [pscustomobject] @{
+            'Lab Profile Id' = $apiResponse.labprofiles.Id[$i]
+            Name = $apiResponse.labprofiles.Name[$i]
+            'Lab Series Id' = $apiResponse.labprofiles.SeriesId[$i]
+            'Lab Series Name' = $apiResponse.LabSeries.Name[$Count]
+        }
+    } 
+
 }else{
-    Write-Host "This Catalog does not contain any Lab Profiles" -ForegroundColor Magenta
-}
+    Write-Host "This Catalog does not contain any Lab Profiles" -ForegroundColor Yellow
+} 
+
+ Format-Table
+
 
