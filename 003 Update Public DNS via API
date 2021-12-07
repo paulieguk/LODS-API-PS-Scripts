@@ -1,0 +1,39 @@
+##This script will discover a labs public IP Address and register
+##the IP Address with a FQDN name in GoDaddy.
+
+## Variable setup  This uses an LOD @Lab Variable to supply the API SSO Key and also requires the full domain name to be supplied as part of the BaseURL.
+$api_key = @{'Authorization' = 'sso-key @lab.Variable(SSO-Key)'}
+$baseURL = 'https://api.godaddy.com/v1/domains/<DomainName>'
+$apiCMD = 'records'
+$labInstanceID = '@lab.LabInstance.Id'
+
+## Get the lab instance Public IP Address
+$PIP = (Invoke-WebRequest -uri "http://ifconfig.me/ip").Content
+
+## The body content below prefixes the Lab Instance ID with the letter i because FQDN names cannot start with a number.
+$Body = @"
+    [
+        {
+        "data" : "$PIP",
+        "name" : "i$labInstanceID",
+        "port" : 80,
+        "priority" : 0,
+        "protocol" : "tcp",
+        "ttl" : 600,
+        "type" : "A",
+        "weight" : 0
+        }
+    ]
+"@
+
+## Powershell setup the API Call.
+$apiCall = @{
+        Method = "Patch"
+        Uri =  "$($baseURL)/$($apiCMD)"
+        ContentType = "application/json"
+        Headers = $api_key
+        Body = $Body
+    }
+
+## This is the actual API Call to get the class as it is currently.
+$apiResponse = Invoke-RestMethod @apiCall
