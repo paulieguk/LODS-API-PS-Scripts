@@ -1,7 +1,7 @@
 ##This script will launch a LOD lab API using PowerShell.
 
 ## Set your api key,  Be sure to remove the <>Brackets when adding the api key.
-$api_key = @{'api_key' = 'AI Key goes here'}
+$api_key = @{'api_key' = 'API Key goes here'}
 $baseURL = 'https://labondemand.com/api/v3'
 $apiCMD = 'launch'
 $labId = 'LabId'
