@@ -10,7 +10,8 @@ $labInstanceID = '@lab.LabInstance.Id'
 ## Get the lab instance Public IP Address
 $PIP = (Invoke-WebRequest -uri "http://ifconfig.me/ip").Content
 
-## The body content below prefixes the Lab Instance ID with the letter i because FQDN names cannot start with a number.
+## The body content below prefixes the Lab Instance ID with the letter i because FQDN names cannot start with a number.  
+## The name value can also have dots in to represent child domains e.g. "dc01.$labInstanceID"
 $Body = @"
     [
         {
