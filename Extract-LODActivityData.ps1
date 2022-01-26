@@ -11,7 +11,7 @@
         Which questions are always answer correctly
         Which questions are always answer wrongly
         Which questions are never/hardly answered
-        Analyis pass and fail rates
+        Analysis pass and fail rates
 
     The script expects that all the Lab Instances specficied are for the same exam.  If they are not the script will still work but additional post script filtering will be required to organise the data.
 
