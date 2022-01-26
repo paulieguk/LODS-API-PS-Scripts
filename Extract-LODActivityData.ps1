@@ -4,6 +4,7 @@
     This example script will take a text/CSV file containing a single column of Lab Instance ID's, extract the performance testing data and output a resulting CSV file for analysis in Pivot tables or PowerBI etc.
 
     .DESCRIPTION
+    Version 1.0.0.0
     This script can be used to extract the activity results for a set of Lab Instances by specifying the Lab Instance ID's in a file that can be extracted from LabOnDemand or from the TMS by using a Lab Instances Report.  The source file requires a single column of Lab Instance ID's available across the API consumer that is specfied either on the command line or by editing the script to bake in the API key.
 
     The initial use of this script would allow aspect of the exams quality to be reviewed.  Examples of this would be:
@@ -15,6 +16,13 @@
     The script expects that all the Lab Instances specficied are for the same exam.  If they are not the script will still work but additional post script filtering will be required to organise the data.
 
     Depending on the number of Lab Instances being queried this script can take some time to run in testing 250 Lab Instances takes approxiamtely 2 minutes.
+
+    Limitations:
+        Does not error out when no activities are present
+        Currently does not support activity groups
+        Does not validate source file
+        Does not check API Key is valid
+        Does not error is Lab Instances are not available via the API Consumer
 
     .EXAMPLE
     Extract-LODActivityData.ps1 -InputFile 'D:\Data\Lab Instances full.csv'
@@ -32,20 +40,22 @@ Param (
         HelpMessage="Add the filename of teh file containing the Lab Instance ID's.")]
         [Alias("I","InputFileName","Path")]
         [string[]]
-        #Specifies the full name of the Input file
+        #Specifies the name of the source file containing a column of Lab Instances ID's
         $InputFile,
-        [Parameter(Position=1
+    [Parameter(Position=1
         )]
         [Alias("O","OutputFileName","Destination")]
         [string[]]
-        #Specifies the full name of the Output file.  If omitted the Input filename will be used with -output added to the filename
-        $OutputFile,
-        [Parameter()]
-        [Alias("ak","API-Key")]
+        #Specifies the name of the Output file.  If omitted the input filename will be used with -output added to the filename
+        $OutputFile = $null,
+    [Parameter()]
+        [Alias("APIKey","ak","API-Key")]
         #Specifies the API Consumer API Key in the format of a GUID (for example: 12345678-1234-1234-1234-12345678) 
-        $APIKey
-
+        $API_Key = $null
 )
+
+##Global veriables
+$Results = @{}
 
 if (!(test-path "$inputfile")) {
     throw "Input filename is invalid"
@@ -55,25 +65,16 @@ if ($outputfile -eq $null) {
     $outputfile = [System.IO.Path]::GetDirectoryName($inputfile) + "\" + [System.IO.Path]::GetFileNameWithoutExtension($inputfile) + "-output.csv"
     }
 
-
-##Global veriables
-$Results = @{}
-$stopwatch = [System.Diagnostics.Stopwatch]::StartNew() 
-
 ## Set your api key,  Be sure to remove the <>Brackets when adding the api key.
-if ($apikey -eq $null){
-    $api_key = @{'api_key' = '<API Key Goes Here>'}
+if ($API_key -eq $null){
+    $api_key = @{'api_key' = 'Type API Key between these quotes replacing this text'}
     }
     Else {
-    $api_key = @{'api_key' = '$apikey'}
+    $api_key = @{'api_key' = "$($API_key)"}
     }
-
 
 ## Read CSV file in
 $p = import-csv -path $inputfile
-
-
-
 
 
 ##  This main loop starts the extraction of each instance from the API.  The instance ID's are ready from the input list.
@@ -95,6 +96,8 @@ $apiCall = @{
 ## This is the actual API Call to get the class as it is currently.
 $apiResponse = Invoke-RestMethod @apiCall
 
+## Generates the progress bar
+Write-Progress -Activity "Retreving Activity Data" -Status "Found Lab Instance: $labinstanceid" -PercentComplete ($i / $p.count * 100)
 
 ## This section contains the non activity related fields that are required for the CSV file.  Update as needed
 $Results[$i] = 
@@ -124,6 +127,5 @@ $Results[$i] =
 ## Write file to the output CSV
 $Results.GetEnumerator() | ForEach-Object {[PSCustomObject]$_.value} | Export-Csv -Path "$outputfile" -NoTypeInformation
 
-Write-host "Output written to $($outputfile).  The script run in $($stopwatch.elapsed.seconds) seconds"
 
-$stopwatch.stop()
+Write-host "Output written to $($outputfile).  The script run in $($elapsedTime.Second) seconds"
