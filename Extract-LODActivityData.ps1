@@ -114,7 +114,7 @@ $Results[$i] =
     "Lab Run Time" = $apiResponse.TotalRunTime
     }
 
-## This iner loop cycles through the activities and extracts the Activity ID and a True/False for pass and fail.  
+## This inner loop cycles through the activities and extracts the Activity ID and a True/False for pass and fail.  
 ##Additional Activity fields could be added.
 
     For ($i1=0; $i1 -lt $apiResponse.ActivityResults.Count; $i1++){
@@ -128,4 +128,4 @@ $Results[$i] =
 $Results.GetEnumerator() | ForEach-Object {[PSCustomObject]$_.value} | Export-Csv -Path "$outputfile" -NoTypeInformation
 
 
-Write-host "Output written to $($outputfile).  The script run in $($elapsedTime.Second) seconds"
+Write-host "Output written to $($outputfile)."
