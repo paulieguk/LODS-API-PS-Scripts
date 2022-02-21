@@ -37,7 +37,7 @@
 Param (
     [Parameter(Mandatory=$True,
         Position=0,
-        HelpMessage="Add the filename of teh file containing the Lab Instance ID's.")]
+        HelpMessage="Add the filename of the file containing the Lab Instance ID's.")]
         [Alias("I","InputFileName","Path")]
         [string[]]
         #Specifies the name of the source file containing a column of Lab Instances ID's
