@@ -32,7 +32,7 @@
 
 Param (
     [Parameter(Mandatory=$True,
-        Position=0,
+        ValueFromPipeline=$True,
         HelpMessage="InputData specifies the string you would like to match in the Lab Profile data.  This input will match against all Lap Profile fields that are exposed via the LOD API"
         )]
         [Alias("ID")]
