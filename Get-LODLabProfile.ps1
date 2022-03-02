@@ -23,7 +23,10 @@
     The API Key is inserted by replacing the text 'Type API Key between these quotes replacing this text' ensure the single quotes are left in place.
     
     .EXAMPLE
-    Get-LODSLabProfile.ps1 -APIKey '12345678-1234-1234-1234-12345678'
+    Get-LODSLabProfile.ps1 -APIKey '12345678-1234-1234-1234-12345678' -InputData Introduction
+    
+    .EXAMPLE
+    Get-LODSLabProfile.ps1 -APIKey '12345678-1234-1234-1234-12345678' -InputData 123456
 #>
 
 
