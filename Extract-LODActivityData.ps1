@@ -23,6 +23,7 @@
         Does not validate source file
         Does not check API Key is valid
         Does not error is Lab Instances are not available via the API Consumer
+        Requires the onlu column in the CSV is the Lab Instance ID and the file does not have a header
 
     .EXAMPLE
     Extract-LODActivityData.ps1 -InputFile 'D:\Data\Lab Instances full.csv'
@@ -110,8 +111,8 @@ $Results[$i] =
     "Pass" = $apiResponse.ExamPassed 
     "Date taken" = $apiResponse.StartTime 
     "First Name" = $apiResponse.UserFirstName 
-    "Surname Name" = $apiResponse.UserLastName 
-    "Lab Run Time" = $apiResponse.TotalRunTime
+    "Last Name" = $apiResponse.UserLastName 
+    "Lab Run Time(Seconds)" = $apiResponse.TotalRunTime
     }
 
 ## This inner loop cycles through the activities and extracts the Activity ID and a True/False for pass and fail.  
