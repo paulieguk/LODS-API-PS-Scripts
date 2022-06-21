@@ -10,7 +10,7 @@ Currently the default Skilable API Consumer this Lab Profile uses is the CSM API
 $Studio_APIKEY = @{'api_key' = '@lab.Variable(StudioAPIKEY)'}
 
 #If the customer system requires an API Key supplied in the header uncomment this value and set the paramater and key.
-#$Customer_APIKEY = @{'api_key' = '@lab.variable(CustomerAPIKEY)'}
+$Customer_APIKEY = @{'api_key' = '@lab.variable(CustomerAPIKEY)'}
 $LabInstanceID = '@lab.LabInstance.Id'
 $StudioURL = "https://labondemand.com/api/v3/Details?labinstanceid=$($LabInstanceID)"
 #Chnage the line below to reflect the customers end point the data needs to go to.
