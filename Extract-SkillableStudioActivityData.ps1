@@ -1,4 +1,4 @@
-﻿<#
+<#
     .SYNOPSIS
     This example script will take a text/CSV file containing a single column of Lab Instance ID's, extract the performance testing data and output a resulting CSV file for analysis in Pivot tables or PowerBI etc.
     .DESCRIPTION
@@ -49,6 +49,14 @@ Param (
 
 ##Global veriables
 $Results = @{}
+$CSVOutput = @()
+$ActivityTypes = @{
+    "0" = "MCQ-single"
+    "10" = "MCQ-multiple"
+    "20" = "Exact match"
+    "30" = "Regex match"
+    "40" = "Script"
+    }
 
 if (!(test-path "$inputfile")) {
     throw "Input filename is invalid"
@@ -64,7 +72,8 @@ if ($null -eq $API_key){
     }
     Else {
     $api_key = @{'api_key' = "$($API_key)"}
-    }
+    } 
+
 
 ## Read CSV file in
 $p = import-csv -path $inputfile
@@ -89,12 +98,16 @@ $apiCall = @{
 ## This is the actual API Call to get the class as it is currently.
 $apiResponse = Invoke-RestMethod @apiCall
 
+
 ## Generates the progress bar
 Write-Progress -Activity "Retreving Activity Data" -Status "Found Lab Instance: $labinstanceid" -PercentComplete ($i / $p.count * 100)
 
 ## This section contains the non activity related fields that are required for the CSV file.  Update as needed
-$Results[$i] = 
-    [ordered]@{
+
+$ResultsObj = New-Object -TypeName System.Object
+
+$Results = 
+    [ORDERED]@{
     "UserID" = $apiResponse.UserId
     "First Name" = $apiResponse.UserFirstName 
     "Last Name" = $apiResponse.UserLastName  
@@ -108,18 +121,23 @@ $Results[$i] =
     "Maximum Score" = $apiResponse.ExamMaxPossibleScore 
     }
 
+$ResultsObj | Add-Member -NotePropertyMembers $Results
+
 ## This inner loop cycles through the activities and extracts the Activity ID and a True/False for pass and fail.  
-##Additional Activity fields could be added.
+## Additional Activity fields could be added.
 
     For ($i1=0; $i1 -lt $apiResponse.ActivityResults.Count; $i1++){
-    $Results[$i] += [ordered]@{
-        "ActivityID: $($apiResponse.ActivityResults[$i1].ActivityID)" = $apiResponse.ActivityResults[$i1].Passed 
-        }
-    } 
+
+      $ResultsObj | Add-Member -NotePropertyName "Activity ID[$i1]:" -NotePropertyValue $($apiResponse.ActivityResults[$i1].ActivityID) 
+      $ResultsObj | Add-Member -NotePropertyName "Activity Type[$i1]:" -NotePropertyValue $ActivityTypes["$($apiResponse.ActivityResults[$i1].ActivityType)"] 
+      $ResultsObj | Add-Member -NotePropertyName "Candidate Result[$i1]:"  -NotePropertyValue  $($apiResponse.ActivityResults[$i1].Passed) 
+    
+    }
+    
+    $CSVOutput += $ResultsObj
 }
 
 ## Write file to the output CSV
-$Results.GetEnumerator() | ForEach-Object {[PSCustomObject]$_.value} | Export-Csv -Path "$outputfile" -NoTypeInformation
-
+$CSVOutput | Export-Csv -Path "$outputfile" -NoTypeInformation
 
 Write-host "Output written to $($outputfile)."
