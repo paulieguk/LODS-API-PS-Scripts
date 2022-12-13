@@ -2,7 +2,7 @@
     .SYNOPSIS
     This example script will take a text/CSV file containing a single column of Lab Instance ID's, extract the performance testing data and output a resulting CSV file for analysis in Pivot tables or PowerBI etc.
     .DESCRIPTION
-    Version 1.0.0.0
+    Version 2.0.0.0
     This script can be used to extract the activity results for a set of Lab Instances by specifying the Lab Instance ID's in a file that can be extracted from Skillale Studio by using a Lab Instances Report.  The source file requires a single column of Lab Instance ID's available across the API consumer that is specfied either on the command line or by editing the script to bake in the API key.
     The initial use of this script would allow aspect of the exams quality to be reviewed.  Examples of this would be:
         Which questions are always answer correctly
@@ -18,7 +18,7 @@
         Does not validate source file
         Does not check API Key is valid
         Does not error is Lab Instances are not available via the API Consumer
-        Requires the onlu column in the CSV is the Lab Instance ID and the file does not have a header
+        Requires the only column in the CSV is the Lab Instance ID and the file does have a header
     .EXAMPLE
     Extract-SkillableStudioActivityData.ps1 -InputFile 'D:\Data\Lab Instances full.csv'
     
