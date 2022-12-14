@@ -50,8 +50,7 @@ Param (
     [Parameter()]
         [Alias("APIKey","ak","API-Key")]
         #Specifies the API Consumer API Key in the format of a GUID (for example: 12345678-1234-1234-1234-12345678) 
-        #$API_Key = $null
-        $API_Key = '64cc4ef6-9d39-4ebf-bb58-090328433a7d'
+        $API_Key = $null
 )
 
 ##Global veriables
