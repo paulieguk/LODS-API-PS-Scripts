@@ -2,6 +2,9 @@ Param(
     [Parameter(Mandatory = $True)]
     [string]
     $APIKey,
+    [Parameter(Mandatory = $True)]
+    [string]
+    $Password,
     [Parameter()]
     [string]
     $SecretStoreName = "SecretStore"
@@ -57,8 +60,14 @@ function Store-Secret {
     Set-Secret -Name $SecretStoreName -Secret $APIKey
 }
 
+$SecurePassword = ConvertTo-SecureString -String $Password -AsPlainText -Force
 
 Check-Modules
+
+#need to check line below and secure string stuff all untested.
+
+Set-SecretStoreConfiguration -Scope CurrentUser -Authentication Pasword -PasswordTimeout 3600 -Interaction None -Password $SecurePassword -Confirm:$false
+
 Check-SecretStore -SecretStoreName $SecretStoreName
 #Store-Secret  -SecretStoreName $SecretStoreName -APIKey $APIKey
 
