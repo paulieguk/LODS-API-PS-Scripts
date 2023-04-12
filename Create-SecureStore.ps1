@@ -1,6 +1,10 @@
 Param(
+    [Parameter(Mandatory = $True)]
+    [string]
+    $APIKey,
     [Parameter()]
-    [string]$SecretStoreName = "SecretStore"
+    [string]
+    $SecretStoreName = "SecretStore"
 )
 
 function Check-Modules{
@@ -31,7 +35,8 @@ function Check-Modules{
 function Check-SecretStore {
     Param(
         [Parameter()]
-        [string]$SecretStoreName = "SecretStore"
+        [string]
+        $SecretStoreName = "SecretStore"
     )
     $SecretVault = Get-SecretVault -Name $SecretStoreName
     if (-not $SecretVault) {
@@ -41,16 +46,20 @@ function Check-SecretStore {
 }
 function Store-Secret {
     Param(
-        [Parameter()]
-        [string]$SecretStoreName = "SecretStore"
+    [Parameter(Mandatory = $True)]
+    [string]
+    $APIKey,
+    [Parameter()]
+    [string]
+    $SecretStoreName = "SecretStore"
     )
     Write-Host "Saving API Key"
-    Set-Secret -Name $SecretStoreName -Secret
+    Set-Secret -Name $SecretStoreName -Secret $APIKey
 }
 
 
 Check-Modules
 Check-SecretStore -SecretStoreName $SecretStoreName
-#Store-Secret  -SecretStoreName $SecretStoreName
+#Store-Secret  -SecretStoreName $SecretStoreName -APIKey $APIKey
 
 
